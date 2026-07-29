@@ -2,8 +2,6 @@
 
 #include "storage.hpp"
 
-// Tests the Storage Engine API
-
 TEST(StorageEngineTest, GetOnMissingKeyReturnsNullopt) {
     StorageEngine engine;
     EXPECT_EQ(engine.get("missing"), std::nullopt);
