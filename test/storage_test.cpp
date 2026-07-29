@@ -2,32 +2,32 @@
 
 #include "storage.hpp"
 
-TEST(StorageEngineTest, GetOnMissingKeyReturnsNullopt) {
+TEST(StorageEngine, GetOnMissingKeyReturnsNullopt) {
     StorageEngine engine;
     EXPECT_EQ(engine.get("missing"), std::nullopt);
 }
 
-TEST(StorageEngineTest, PutThenGetReturnsValue) {
+TEST(StorageEngine, PutThenGetReturnsValue) {
     StorageEngine engine;
     engine.put("key", "value");
     EXPECT_EQ(engine.get("key"), "value");
 }
 
-TEST(StorageEngineTest, PutOverwritesExistingValue) {
+TEST(StorageEngine, PutOverwritesExistingValue) {
     StorageEngine engine;
     engine.put("key", "value");
     engine.put("key", "new-value");
     EXPECT_EQ(engine.get("key"), "new-value");
 }
 
-TEST(StorageEngineTest, DelRemovesExistingKey) {
+TEST(StorageEngine, DelRemovesExistingKey) {
     StorageEngine engine;
     engine.put("key", "value");
     EXPECT_TRUE(engine.del("key"));
     EXPECT_EQ(engine.get("key"), std::nullopt);
 }
 
-TEST(StorageEngineTest, DelOnMissingKeyReturnsFalse) {
+TEST(StorageEngine, DelOnMissingKeyReturnsFalse) {
     StorageEngine engine;
     EXPECT_FALSE(engine.del("missing"));
 }

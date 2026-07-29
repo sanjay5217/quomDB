@@ -1,22 +1,40 @@
 #include "wal.hpp"
 
 #include <cstring>
+#include <fcntl.h>
+#include <filesystem>
+#include <unistd.h>
 
 WriteAheadLog::WriteAheadLog() {
-    log.open("wal.log", std::ios::in | std::ios::out | std::ios::app | std::ios::binary);
+    std::filesystem::create_directories("data");
+    logfd = open("data/wal.log", O_WRONLY | O_CREAT | O_APPEND, 0644);
+    bbuffer_entries = 0;
 }
 
 void WriteAheadLog::append(Log log_entry) {
     std::vector<std::byte> encoding = encode(log_entry);
-    log.write(reinterpret_cast<const char*>(encoding.data()), encoding.size());
+    bbuffer.push_back(encoding);
+    bbuffer_entries++;
+
+    if (bbuffer_entries >= BATCH_SIZE) {
+        flush();
+    }
+
 }
 
-void WriteAheadLog::replay() {
+// do replay and flush after implementing the MemTable
 
+void WriteAheadLog::replay() {
+    // TODO
 }
 
 void WriteAheadLog::flush() {
-
+    for (auto& entry : bbuffer) {
+        write(logfd, entry.data(), entry.size());
+    }
+    fsync(logfd);
+    bbuffer.clear();
+    bbuffer_entries = 0;
 }
 
 std::vector<std::byte> WriteAheadLog::encode(Log log_entry) {
@@ -71,5 +89,5 @@ Log WriteAheadLog::decode(const std::vector<std::byte>& log_entry) const {
 }
 
 WriteAheadLog::~WriteAheadLog() {
-    log.close();
+    close(logfd);
 }

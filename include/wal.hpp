@@ -9,6 +9,8 @@
 
 #include "storage.hpp"
 
+static constexpr size_t BATCH_SIZE = 10;
+
 enum class CommandType : uint8_t {
     GET = 0,
     PUT = 1,
@@ -44,5 +46,7 @@ class WriteAheadLog {
     Log decode(const std::vector<std::byte>& log_entry) const;
 
     private:
-    std::fstream log;
+    int logfd;
+    std::vector<std::vector<std::byte>> bbuffer;
+    size_t bbuffer_entries;
 };
