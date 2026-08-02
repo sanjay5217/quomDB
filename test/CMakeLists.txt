@@ -11,6 +11,7 @@ FetchContent_MakeAvailable(googletest)
 add_executable(quom_tests
     storage_test.cpp
     wal_test.cpp
+    skiplist_test.cpp
 )
 target_link_libraries(quom_tests PRIVATE quom_lib GTest::gtest_main)
 
