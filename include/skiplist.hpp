@@ -6,16 +6,6 @@
 
 template <typename key_type, typename value_type>
 class SkipList {
-    public:
-    explicit SkipList(int level);
-    ~SkipList();
-    SkipList(const SkipList& other) = delete;
-    SkipList& operator=(const SkipList& other) = delete;
-
-    std::optional<value_type> search(key_type key);
-    void insert(key_type key, value_type value);
-    bool erase(key_type key);
-
     private:
     struct Node {
         key_type key;
@@ -34,7 +24,52 @@ class SkipList {
     std::bernoulli_distribution coin;
 
     int randomLevel();
+
+    public:
+    explicit SkipList(int level);
+    ~SkipList();
+    SkipList(const SkipList& other) = delete;
+    SkipList& operator=(const SkipList& other) = delete;
+
+    std::optional<value_type> search(key_type key);
+    void insert(key_type key, value_type value);
+    bool erase(key_type key);
+
+    class Iterator {
+        private:
+            Node* current;
+
+        public:
+
+        Iterator(Node* node) : current{node} {}
+
+        value_type& operator*() {
+            return current->value;
+        }
+
+        Iterator& operator++() {
+            current = current->forward[0];
+            return *this;
+        }
+
+        bool operator!=(const Iterator& other) {
+            return current != other.current;
+        }
+    };
+
+    Iterator begin();
+    Iterator end();
 };
+
+template <typename key_type, typename value_type>
+typename SkipList<key_type, value_type>::Iterator SkipList<key_type, value_type>::begin() {
+    return Iterator(head->forward[0]);
+}
+
+template <typename key_type, typename value_type>
+typename SkipList<key_type, value_type>::Iterator SkipList<key_type, value_type>::end() {
+    return Iterator(nullptr);
+}
 
 template <typename key_type, typename value_type>
 SkipList<key_type, value_type>::SkipList(int level) : 

@@ -10,5 +10,8 @@ add_library(quom_lib
 )
 target_include_directories(quom_lib PUBLIC include)
 
+add_executable(quom src/main.cpp)
+target_link_libraries(quom PRIVATE quom_lib)
+
 enable_testing()
 add_subdirectory(test)

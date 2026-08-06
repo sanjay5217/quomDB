@@ -11,10 +11,11 @@ TEST(WriteAheadLog, EncodeWorks) {
     Log log{CommandType::PUT, "key", "value", 1000};
     
     std::vector<std::byte> bytes = {
-        std::byte{0x01},
+        std::byte{0x00},
+        std::byte{0x72}, std::byte{0xce}, std::byte{0xfe}, std::byte{0x3e},
         std::byte{0x03}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00},
         std::byte{0x05}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00},
-        std::byte{0xE8}, std::byte{0x03}, std::byte{0x00}, std::byte{0x00}, 
+        std::byte{0xE8}, std::byte{0x03}, std::byte{0x00}, std::byte{0x00},
         std::byte{0x00}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00},
         std::byte{'k'}, std::byte{'e'}, std::byte{'y'},
         std::byte{'v'}, std::byte{'a'}, std::byte{'l'}, std::byte{'u'}, std::byte{'e'}
@@ -29,10 +30,11 @@ TEST(WriteAheadLog, DecodeWorks) {
     Log log{CommandType::PUT, "key", "value", 1000};
     
     std::vector<std::byte> bytes = {
-        std::byte{0x01},
+        std::byte{0x00},
+        std::byte{0x72}, std::byte{0xce}, std::byte{0xfe}, std::byte{0x3e},
         std::byte{0x03}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00},
         std::byte{0x05}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00},
-        std::byte{0xE8}, std::byte{0x03}, std::byte{0x00}, std::byte{0x00}, 
+        std::byte{0xE8}, std::byte{0x03}, std::byte{0x00}, std::byte{0x00},
         std::byte{0x00}, std::byte{0x00}, std::byte{0x00}, std::byte{0x00},
         std::byte{'k'}, std::byte{'e'}, std::byte{'y'},
         std::byte{'v'}, std::byte{'a'}, std::byte{'l'}, std::byte{'u'}, std::byte{'e'}
@@ -64,14 +66,14 @@ TEST(WriteAheadLog, EncodeDecodeRoundTrip) {
 }
 
 TEST(WriteAheadLog, AppendandFlushTest) {
-    std::remove("data/wal.log");
+    std::remove("data/wal-0.log");
 
     WriteAheadLog wal;
     Log entry{CommandType::PUT, "key", "value", 100};
     size_t entry_size = wal.encode(entry).size();
 
     auto file_entry_count = [&]() -> size_t {
-        std::ifstream file("data/wal.log", std::ios::binary | std::ios::ate);
+        std::ifstream file("data/wal-0.log", std::ios::binary | std::ios::ate);
         if (!file.is_open()) {
             return 0;
         }
@@ -98,10 +100,10 @@ TEST(WriteAheadLog, AppendandFlushTest) {
     }
     EXPECT_EQ(file_entry_count(), 20u);
 
-    std::ifstream file("data/wal.log", std::ios::binary);
+    std::ifstream file("data/wal-0.log", std::ios::binary);
     std::vector<std::byte> first_entry_bytes(entry_size);
     file.read(reinterpret_cast<char*>(first_entry_bytes.data()), static_cast<std::streamsize>(entry_size));
     EXPECT_EQ(wal.decode(first_entry_bytes), entry);
 
-    std::remove("data/wal.log");
+    std::remove("data/wal-0.log");
 }
