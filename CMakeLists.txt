@@ -8,7 +8,6 @@ add_library(quom_lib
     src/storage.cpp
     src/wal.cpp
     src/wal_utils.cpp
-    src/internal_key.cpp
 )
 target_include_directories(quom_lib PUBLIC include)
 
