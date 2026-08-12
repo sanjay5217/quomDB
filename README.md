@@ -42,10 +42,8 @@ Optimizations:
 
 ![binary-encoding](/images/binary-encode.png)
 
-* **Batch Writes (Throughput Optimization):** Persisting every write immediately with `fsync` provides the strongest durability guarantees, but it also incurs significant I/O overhead. To improve throughput, I buffer log records in memory and flush them to disk once the buffer reaches a configurable batch size. This amortizes the cost of `fsync` across multiple writes. The tradeoff is durability: if the database crashes before the buffered entries are flushed, those pending records are lost.
-
-* **Segmentation (Scalablity Optimization):** Allowing the write-ahead log to grow indefinitely would make recovery slower and log management more difficult. Instead, the WAL is divided into fixed-size segments. Once a segment reaches its size limit, a new segment is created for subsequent writes. After the corresponding MemTable has been successfully flushed to an SSTable, obsolete WAL segments can be safely deleted. This keeps recovery times bounded and simplifies storage management.
-
 * **Checksums (Durability Optimization):** A crash or hardware fault can leave log records partially written or corrupted. To detect this, each record stores a CRC32 checksum computed over its contents. During recovery, the checksum is recomputed and compared against the stored value. A mismatch indicates that the record has been corrupted, allowing the database to detect invalid entries rather than replaying potentially damaged data.
+
+    Important Note: For Quom, I used CRC32 as a checksum mechanism to detect accidental corruption in WAL records. I treated the CRC32 implementation itself as a black box because it is a well-established algorithm with optimized implementations available. My focus was integrating it into the storage pipeline: generating the checksum during writes, persisting it alongside records, and validating it during recovery.
 
 
