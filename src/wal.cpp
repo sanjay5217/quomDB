@@ -1,10 +1,6 @@
 #include "wal.hpp"
 #include "wal_utils.hpp"
 
-#include <fcntl.h>
-#include <filesystem>
-#include <unistd.h>
-
 WriteAheadLog::WriteAheadLog() {
     std::filesystem::create_directories("data");
     logfd = open("data/wal.log", O_WRONLY | O_CREAT | O_APPEND, 0644);

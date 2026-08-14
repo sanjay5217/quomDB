@@ -56,7 +56,5 @@ int main() {
 
         std::cout << "quom> ";
     }
-
-    std::cout << "\n";
     return 0;
 }

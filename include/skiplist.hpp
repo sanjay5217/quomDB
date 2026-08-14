@@ -23,7 +23,7 @@ class SkipList {
     std::mt19937 rng;
     std::bernoulli_distribution coin;
 
-    int randomLevel();
+    int random_level();
 
     public:
     explicit SkipList(int level);
@@ -92,7 +92,7 @@ SkipList<key_type, value_type>::~SkipList() {
 }
 
 template <typename key_type, typename value_type>
-int SkipList<key_type, value_type>::randomLevel() {
+int SkipList<key_type, value_type>::random_level() {
     int level = 1;
     while (level < max_level && coin(rng)) {
         level++;
@@ -135,7 +135,7 @@ void SkipList<key_type, value_type>::insert(key_type key, value_type value) {
         return;
     }
 
-    int new_level = randomLevel();
+    int new_level = random_level();
     if (new_level > current_level) {
         for (int i = current_level; i < new_level; i++) {
             update[i] = head;

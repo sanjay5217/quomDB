@@ -6,6 +6,9 @@
 #include <fstream>
 #include <cstddef>
 #include <cstdint>
+#include <fcntl.h>
+#include <filesystem>
+#include <unistd.h>
 
 #include "storage.hpp"
 
