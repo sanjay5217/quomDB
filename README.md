@@ -1,4 +1,4 @@
-# QUOM
+# QUOM (In progress)
 
 Quom is a key-value store built from scratch to explore the systems that power modern databases like RocksDB. It implements an LSM-tree storage engine, write-ahead logging and Bloom filters.
 
